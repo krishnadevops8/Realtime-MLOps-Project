@@ -6,8 +6,8 @@ on:
   workflow_dispatch:
 
 env:
-  AWS_REGION: us-east-1
-  S3_BUCKET: churn-model-bucket-cicd-abhi
+  AWS_REGION: us-east-2
+  S3_BUCKET: churn-model-bucket-krish
 
 jobs:
   train-and-deploy:
@@ -42,15 +42,18 @@ jobs:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ env.AWS_REGION }}
+
+    - name: Verify AWS identity
+      run: aws sts get-caller-identity
     
     - name: Push model to S3 directly
       run: |
-        aws s3 cp models/churn_model.pkl s3://churn-model-bucket-cicd-abhi/models/churn_model.pkl
+        aws s3 cp models/churn_model.pkl s3://churn-model-bucket-krish/modal/churn_model.pkl
         echo "Model pushed to S3 is success"
     
     - name: Update inference.yaml with S3 model path
       run: |
-        MODEL_URI="s3://churn-model-bucket-cicd-abhi/models/churn_model.pkl"
+        MODEL_URI="s3://churn-model-bucket-krish/modal/churn_model.pkl"
         sed -i "s|storageUri: .*|storageUri: $MODEL_URI|g" k8s/inference.yaml
     
     - name: Commit updated inference.yaml
