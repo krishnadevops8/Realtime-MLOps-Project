@@ -47,16 +47,16 @@ jobs:
       run: aws sts get-caller-identity
 
      - name: Push dataset to S3
-       run: aws s3 cp data/churn_data.csv s3://${{ env.S3_BUCKET }}/data/churn_data.csv      
+       run: aws s3 cp data/churn_data.csv s3://churn-model-bucket-krish/data/churn_data.csv      
     
     - name: Push model to S3 directly
       run: |
-        aws s3 cp models/churn_model.pkl s3://${{ env.S3_BUCKET }}/modal/churn_model-2.pkl
+        aws s3 cp models/churn_model.pkl s3://churn-model-bucket-krish/modal/churn_model-2.pkl
         echo "Model pushed to S3 is success"
     
     - name: Update inference.yaml with S3 model path
       run: |
-        MODEL_URI="s3://${{ env.S3_BUCKET }}/modal/churn_model.pkl"
+        MODEL_URI="s3://churn-model-bucket-krish/modal/churn_model.pkl"
         sed -i "s|storageUri: .*|storageUri: $MODEL_URI|g" k8s/inference.yaml
     
     - name: Commit updated inference.yaml
